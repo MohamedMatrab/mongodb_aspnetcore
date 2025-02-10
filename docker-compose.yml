@@ -1,0 +1,28 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP.NET Core service.
+
+version: '3.4'
+
+services:
+
+  mongo:
+    image: mongo
+    container_name: mongodb_books
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pswd123456789
+    ports:
+      - 27017:27017
+  mongodbtestapi:
+    image: mongodbtestapi
+    container_name: mongodbtestapi
+    build:
+      context: .
+      dockerfile: MongoDbTest.API/Dockerfile
+    environment:
+      - BookStoreDatabase__ConnectionString=mongodb://root:pswd123456789@mongo:27017
+    depends_on:
+      - mongo
+    ports:
+      - 5000:80
+      - 5001:81
